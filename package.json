@@ -1,0 +1,12 @@
+{
+  "name": "authentication-autorization",
+  "version": "1.0.0",
+  "description": "Practice to learn Authentication and Authorization in JavaScript",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT"
+}
