@@ -1,7 +1,10 @@
 const express = require("express");
+const authCookie = require("./auth-cookie");
 
 const app = express();
 const port = 3000;
+
+app.use(authCookie);
 
 app.get("/", (req, res) => {
   // Cookie Creation
@@ -37,6 +40,7 @@ app.get("/", (req, res) => {
 
 app.get("/api", (req, res) => {
   // The cookie 'sessionId' exist here
+  console.log(req.cookies);
   res.send("Hello World API");
 });
 
