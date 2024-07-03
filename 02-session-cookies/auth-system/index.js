@@ -29,6 +29,10 @@ app.get("/sessions", (req, res) => {
   res.status(200).json({ sessions: req.sessionStore.sessions });
 });
 
+app.get("/users", (req, res) => {
+  res.status(200).json({ users });
+});
+
 app.post("/register", (req, res) => {
   if (!req.body.data) {
     res.status(400).send("Please add data");
