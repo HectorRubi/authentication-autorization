@@ -1,6 +1,7 @@
 const express = require("express");
 const session = require("express-session");
 const bcrypt = require("bcrypt");
+const cors = require("cors");
 
 const app = express();
 const port = 3000;
@@ -9,6 +10,7 @@ const users = [];
 
 const getCredentials = (data = "") => atob(data).split(":");
 
+app.use(cors());
 app.use(express.json());
 app.use(
   session({
