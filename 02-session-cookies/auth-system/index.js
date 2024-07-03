@@ -75,7 +75,14 @@ app.post("/login", (req, res) => {
   }
 });
 
-app.post("/logout", () => {});
+app.post("/logout", (req, res) => {
+  if (req.session.user) {
+    req.session.destroy();
+    res.status(200).json({ message: "Logged out" });
+  } else {
+    res.status(404).json({ message: "Not found" });
+  }
+});
 
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${3000}`);
