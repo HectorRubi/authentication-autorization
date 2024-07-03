@@ -5,13 +5,7 @@ const bcrypt = require("bcrypt");
 const app = express();
 const port = 3000;
 const salt = 10;
-const users = [
-  {
-    id: 1,
-    email: "test@test.com",
-    pass: "$2b$10$KZoGcU.YRpoQk6zhrDxT6uai9nPykaZ58axgg1YSOuEV.5ZocyG8G",
-  },
-];
+const users = [];
 
 const getCredentials = (data) => atob(data).split(":");
 
@@ -53,7 +47,6 @@ app.post("/register", (req, res) => {
     // req.session.user = { id, email, encrypted };
   }
 
-  console.log({ users });
   res.status(201).json({ message: "Registration success" });
 });
 
@@ -61,10 +54,11 @@ app.post("/login", (req, res) => {
   // Get credentials
   const [email, pass] = getCredentials(req.body.data);
 
-  // Check if user exist
+  // Check if user exist in database
   const user = users.find(
     (userDB) => userDB.email === email && bcrypt.compareSync(pass, userDB.pass)
   );
+
   if (user) {
     // Encrypt password
     const encrypted = bcrypt.hashSync(pass, salt);
