@@ -7,7 +7,7 @@ const port = 3000;
 const salt = 10;
 const users = [];
 
-const getCredentials = (data) => atob(data).split(":");
+const getCredentials = (data = "") => atob(data).split(":");
 
 app.use(express.json());
 app.use(
