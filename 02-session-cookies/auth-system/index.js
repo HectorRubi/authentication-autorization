@@ -3,6 +3,8 @@ const session = require("express-session");
 const bcrypt = require("bcrypt");
 const cors = require("cors");
 
+const authMiddleware = require("./authMiddleware");
+
 const app = express();
 const port = 3000;
 const salt = 10;
@@ -25,7 +27,7 @@ app.use(
 
     cookie: {
       secure: false,
-      httpOnly: false,
+      httpOnly: true,
     },
   })
 );
@@ -82,11 +84,19 @@ app.post("/login", (req, res) => {
 
 app.post("/logout", (req, res) => {
   if (req.session.user) {
-    req.session.destroy();
-    res.status(200).json({ message: "Logged out" });
+    req.session.destroy(() => {
+      res.status(200).json({ message: "Logged out" });
+    });
   } else {
     res.status(404).json({ message: "Not found" });
   }
+});
+
+app.get("/user", authMiddleware, (req, res) => {
+  // Get user data from database
+  const email = req.session.user.email;
+  const user = users.find((user) => user.email === email);
+  res.status(200).json({ user });
 });
 
 app.listen(port, () => {
