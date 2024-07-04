@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register Page</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #f0f0f0;
+      }
+
+      .register-container {
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        width: 300px;
+        text-align: center;
+      }
+
+      h2 {
+        margin-bottom: 20px;
+      }
+
+      .input-group {
+        margin-bottom: 15px;
+        text-align: left;
+      }
+
+      .input-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+
+      .input-group input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #cccccc;
+        border-radius: 4px;
+        transition: border-color 0.3s;
+      }
+
+      .input-group input:focus {
+        border-color: #007bff;
+      }
+
+      input + small {
+        display: block;
+        margin-top: 5px;
+        color: #666;
+        font-size: 12px;
+      }
+
+      button {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        border-radius: 4px;
+        background-color: #007bff;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="register-container">
+      <h2>Register</h2>
+      <form id="registerForm" onsubmit="return validateRegisterForm(event)">
+        <div class="input-group">
+          <label for="email">Email</label>
+          <input type="text" id="email" name="email" required />
+        </div>
+        <div class="input-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" required />
+          <small
+            >Password must be at least 8 characters, include an uppercase
+            letter, a number, and a special character.</small
+          >
+        </div>
+        <div class="input-group">
+          <label for="confirmPassword">Confirm Password</label>
+          <input
+            type="password"
+            id="confirmPassword"
+            name="confirmPassword"
+            required
+          />
+        </div>
+        <button type="submit">Register</button>
+      </form>
+    </div>
+    <script>
+      function validateEmail(email) {
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailPattern.test(email);
+      }
+
+      function validatePassword(password) {
+        const passwordPattern =
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&\.])[A-Za-z\d@$!%*?&\.]{8,}$/;
+        return passwordPattern.test(password);
+      }
+
+      function validateRegisterForm(event) {
+        event.preventDefault();
+
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+        const confirmPassword =
+          document.getElementById("confirmPassword").value;
+
+        if (!validateEmail(email)) {
+          alert("Please enter a valid email address.");
+          return false;
+        }
+
+        if (!validatePassword(password)) {
+          alert(
+            "Password must be at least 8 characters long, include an uppercase letter, a number, and a special character."
+          );
+          return false;
+        }
+
+        if (password !== confirmPassword) {
+          alert("Passwords do not match.");
+          return false;
+        }
+
+        // Form is valid, proceed with submission
+        const requestData = {
+          credentials: btoa(`${email}:${password}`), // Encrypt credential using base64
+        };
+
+        fetch("http://localhost:3000/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestData),
+        })
+          .then((response) => {
+            if (response.status >= 300) {
+              throw new Error("Registration fail");
+            }
+            return response.json();
+          })
+          .then((data) => {
+            // Redirect to login
+            console.log("Success:", data);
+            alert("You will be redirected to login.");
+            window.location.href = "/02-session-cookies/auth-system/index.html";
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+
+        return true;
+      }
+    </script>
+  </body>
+</html>
