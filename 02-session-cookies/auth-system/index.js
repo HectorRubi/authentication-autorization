@@ -39,11 +39,12 @@ app.get("/users", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
-  if (!req.body.data) {
+  if (!req.body.credentials) {
     res.status(400).send("Please add data");
   }
+
   // Get credentials
-  const [email, pass] = getCredentials(req.body.data);
+  const [email, pass] = getCredentials(req.body.credentials);
 
   // Check if user is already register
   if (
@@ -55,7 +56,6 @@ app.post("/register", (req, res) => {
     const id = users.length + 1;
     const encrypted = bcrypt.hashSync(pass, salt);
     users.push({ id, email, pass: encrypted });
-    // req.session.user = { id, email, encrypted };
   }
 
   res.status(201).json({ message: "Registration success" });
@@ -63,7 +63,7 @@ app.post("/register", (req, res) => {
 
 app.post("/login", (req, res) => {
   // Get credentials
-  const [email, pass] = getCredentials(req.body.data);
+  const [email, pass] = getCredentials(req.body.credentials);
 
   // Check if user exist in database
   const user = users.find(
