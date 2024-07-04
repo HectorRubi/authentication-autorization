@@ -144,6 +144,7 @@
           .then((data) => {
             // Redirect to home
             console.log("Success:", data);
+            window.location.href = "/02-session-cookies/auth-system/home.html";
           })
           .catch((error) => {
             console.error("Error:", error);
