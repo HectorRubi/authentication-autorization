@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login Page</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #f0f0f0;
+      }
+
+      .login-container {
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        width: 300px;
+        text-align: center;
+      }
+
+      h2 {
+        margin-bottom: 20px;
+      }
+
+      .input-group {
+        margin-bottom: 15px;
+        text-align: left;
+      }
+
+      .input-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+
+      .input-group input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #cccccc;
+        border-radius: 4px;
+        transition: border-color 0.3s;
+      }
+
+      .input-group input:focus {
+        border-color: #007bff;
+      }
+
+      button {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        border-radius: 4px;
+        background-color: #007bff;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
+
+      .links {
+        margin-top: 15px;
+      }
+
+      .links a {
+        color: #007bff;
+        text-decoration: none;
+        margin: 0 5px;
+        transition: color 0.3s;
+      }
+
+      .links a:hover {
+        color: #0056b3;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-container">
+      <h2>Login</h2>
+      <form id="loginForm" onsubmit="return validateAndSubmitForm(event)">
+        <div class="input-group">
+          <label for="email">Email or Username</label>
+          <input type="text" id="email" name="email" required />
+        </div>
+        <div class="input-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" required />
+        </div>
+        <button type="submit">Login</button>
+        <div class="links">
+          <a href="/02-session-cookies/auth-system/register.html">Register</a>
+        </div>
+      </form>
+    </div>
+    <script>
+      function validateForm() {
+        const email = document.getElementById("email").value;
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!emailPattern.test(email)) {
+          alert("Please enter a valid email address.");
+          return false;
+        }
+
+        return true;
+      }
+
+      function validateAndSubmitForm(event) {
+        event.preventDefault();
+
+        if (!validateForm()) {
+          return false;
+        }
+
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+        const credentials = btoa(`${email}:${password}`);
+
+        const requestData = { credentials };
+
+        fetch("http://localhost:3000/login", {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestData),
+        })
+          .then((response) => {
+            if (response.status !== 200) {
+              throw new Error("Access denied");
+            }
+            return response.json();
+          })
+          .then((data) => {
+            // Redirect to home
+            console.log("Success:", data);
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+
+        return true;
+      }
+    </script>
+  </body>
+</html>
