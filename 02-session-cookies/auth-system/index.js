@@ -2,8 +2,10 @@ const express = require("express");
 const session = require("express-session");
 const bcrypt = require("bcrypt");
 const cors = require("cors");
+const path = require("path");
 
 const authMiddleware = require("./authMiddleware");
+const authApiMiddleware = require("./authApiMiddleware");
 
 const app = express();
 const port = 3000;
@@ -19,6 +21,7 @@ app.use(
   })
 );
 app.use(express.json());
+app.use(express.urlencoded());
 app.use(
   session({
     secret: "this is a simple secret",
@@ -32,14 +35,13 @@ app.use(
   })
 );
 
-app.get("/sessions", (req, res) => {
-  res.status(200).json({ sessions: req.sessionStore.sessions });
+app.get("/", authMiddleware, (req, res) => {
+  res.redirect("/home");
 });
 
-app.get("/users", (req, res) => {
-  res.status(200).json({ users });
+app.get("/register", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "./pages/register.html"));
 });
-
 app.post("/register", (req, res) => {
   if (!req.body.credentials) {
     res.status(400).send("Please add data");
@@ -63,9 +65,13 @@ app.post("/register", (req, res) => {
   res.status(201).json({ message: "Registration success" });
 });
 
+app.get("/login", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "./pages/login.html"));
+});
 app.post("/login", (req, res) => {
   // Get credentials
-  const [email, pass] = getCredentials(req.body.credentials);
+  const email = req.body.email;
+  const pass = req.body.password;
 
   // Check if user exist in database
   const user = users.find(
@@ -76,27 +82,40 @@ app.post("/login", (req, res) => {
     // Encrypt password
     const encrypted = bcrypt.hashSync(pass, salt);
     req.session.user = { id: user.id, email, pass: encrypted };
-    res.status(200).json({ message: "Access granted" });
+    res.redirect("/home");
   } else {
-    res.status(403).json({ message: "Email or password incorrect" });
+    res.redirect("/login");
   }
 });
 
-app.post("/logout", (req, res) => {
+app.get("/logout", (req, res) => {
   if (req.session.user) {
-    req.session.destroy(() => {
-      res.status(200).json({ message: "Logged out" });
+    req.session.destroy((err) => {
+      req.session = null;
+      res.redirect("/");
     });
   } else {
-    res.status(404).json({ message: "Not found" });
+    res.redirect("/");
   }
 });
 
-app.get("/user", authMiddleware, (req, res) => {
+app.get("/home", authMiddleware, (req, res) => {
+  res.sendFile(path.resolve(__dirname, "./pages/home.html"));
+});
+app.get("/profile", authApiMiddleware, (req, res) => {
   // Get user data from database
   const email = req.session.user.email;
   const user = users.find((user) => user.email === email);
   res.status(200).json({ user });
+});
+
+// Endpoints for insights
+app.get("/sessions", (req, res) => {
+  res.status(200).json({ sessions: req.sessionStore.sessions });
+});
+
+app.get("/users", (req, res) => {
+  res.status(200).json({ users });
 });
 
 app.listen(port, () => {

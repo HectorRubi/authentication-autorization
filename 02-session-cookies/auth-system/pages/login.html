@@ -86,7 +86,8 @@
   <body>
     <div class="login-container">
       <h2>Login</h2>
-      <form id="loginForm" onsubmit="return validateAndSubmitForm(event)">
+      <form id="loginForm" action="/login" method="post">
+        <!-- onsubmit="return validateAndSubmitForm(event)" -->
         <div class="input-group">
           <label for="email">Email or Username</label>
           <input type="text" id="email" name="email" required />
@@ -97,7 +98,7 @@
         </div>
         <button type="submit">Login</button>
         <div class="links">
-          <a href="/02-session-cookies/auth-system/register.html">Register</a>
+          <a href="/register">Register</a>
         </div>
       </form>
     </div>
@@ -127,28 +128,28 @@
 
         const requestData = { credentials };
 
-        fetch("http://localhost:3000/login", {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(requestData),
-        })
-          .then((response) => {
-            if (response.status !== 200) {
-              throw new Error("Access denied");
-            }
-            return response.json();
-          })
-          .then((data) => {
-            // Redirect to home
-            console.log("Success:", data);
-            window.location.href = "/02-session-cookies/auth-system/home.html";
-          })
-          .catch((error) => {
-            console.error("Error:", error);
-          });
+        // fetch("http://localhost:3000/login", {
+        //   method: "POST",
+        //   credentials: "include",
+        //   headers: {
+        //     "Content-Type": "application/json",
+        //   },
+        //   body: JSON.stringify(requestData),
+        // })
+        //   .then((response) => {
+        //     if (response.status !== 200) {
+        //       throw new Error("Access denied");
+        //     }
+        //     return response.json();
+        //   })
+        //   .then((data) => {
+        //     // Redirect to home
+        //     console.log("Success:", data);
+        //     window.location.href = "/home";
+        //   })
+        //   .catch((error) => {
+        //     console.error("Error:", error);
+        //   });
 
         return true;
       }
